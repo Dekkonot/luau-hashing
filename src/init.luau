@@ -16,8 +16,8 @@ local function u64ToBytes(value: number): { number }
 	end
 end
 
---- Preprocesses the message, making sure it has the appropriate characteristics.
---- Accepts a single string and returns an array of bytes.
+--- Preprocesses the message, making sure it has the right size and formatting
+--- for hashing.
 local function preprocess(message: string): { number }
 	local initLen = #message
 	local msgLen = initLen + 9
@@ -85,12 +85,16 @@ local function processBlock(digest: { number }, block: { number }): nil
 end
 
 --[=[
-	Computes the SHA-1 hash for `message` and returns the hex-sequence of it.
+	Computes the SHA-1 hash for `message` and returns it.
+	This function returns both a hexadecimal encoded string of the hash
+	and returns a **read-only** table containing the five 32-bit integers
+	that make up the hash.
 	
 	@param message -- The payload to compute the SHA-1 hash of
-	@return string -- The computed SHA-1 hash
+	@return string -- The computed SHA-1 hash as a string of hexadecimal digits
+	@return {number} -- The computed SHA-1 hash as an array of 5 integers
 ]=]
-local function sha1(message: string): string
+local function sha1(message: string): (string, { number })
 	local bytes = preprocess(message)
 
 	local digest = {
@@ -197,13 +201,24 @@ local function sha1(message: string): string
 		digest[5] %= 2 ^ 32
 	end
 
-	return string.format("%08x%08x%08x%08x%08x", digest[1], digest[2], digest[3], digest[4], digest[5])
+	return string.format("%08x%08x%08x%08x%08x", digest[1], digest[2], digest[3], digest[4], digest[5]),
+		table.freeze(digest)
 end
 
 if true then
 	local t = os.clock()
 
-	assert(sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d", "(SHA-1) abc hash does not match")
+	do
+		local hash, digest = sha1("abc")
+		assert(hash == "a9993e364706816aba3e25717850c26c9cd0d89d", "(SHA-1) abc hash does not match")
+		assert(digest[1] == 0xa9993e36, "(SHA-1) first word of abc hash was incorrect")
+		assert(digest[2] == 0x4706816a, "(SHA-1) second word of abc hash was incorrect")
+		assert(digest[3] == 0xba3e2571, "(SHA-1) third word of abc hash was incorrect")
+		assert(digest[4] == 0x7850c26c, "(SHA-1) fourth word of abc hash was incorrect")
+		assert(digest[5] == 0x9cd0d89d, "(SHA-1) fifth word of abc hash was incorrect")
+		assert(table.isfrozen(digest), "(SHA-1) returned digest of abc hash was not frozen")
+	end
+
 	assert(sha1("") == "da39a3ee5e6b4b0d3255bfef95601890afd80709", "(SHA-1) empty hash does not match")
 	assert(
 		sha1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") == "84983e441c3bd26ebaae4aa1f95129e5e54670f1",
