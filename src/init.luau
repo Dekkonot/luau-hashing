@@ -1,6 +1,8 @@
 --!strict
 --!optimize 2
 
+local RUN_TESTS = false
+
 --- Takes a u64 and returns it as an array of 8 bytes.
 local function u64ToBytes(value: number): { number }
 	if value < 2 ^ 32 then
@@ -205,7 +207,7 @@ local function sha1(message: string): (string, { number })
 		table.freeze(digest)
 end
 
-if true then
+if RUN_TESTS then
 	local t = os.clock()
 
 	do
