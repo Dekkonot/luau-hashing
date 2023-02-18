@@ -1,0 +1,23 @@
+name: Run Tests
+on:
+  push:
+    paths: '**.luau'
+    branches: 'main'
+  pull_request:
+    paths: '**.luau'
+jobs:
+  Run Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 'Install Luau'
+        run: |
+          gh release download --repo Roblox/luau --pattern luau-ubuntu.zip
+          unzip luau-ubuntu.zip
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: 'Run Tests'
+        run: |
+          ./luau test.luau
