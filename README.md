@@ -1,4 +1,5 @@
 # SHA1 Luau
+[![Run Tests](https://github.com/Dekkonot/luau-sha1/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/Dekkonot/luau-sha1/actions/workflows/test.yml)
 
 A pure Luau implementation of the SHA-1 hashing algorithm. Blazing fast (for Luau) and well-tested.
 
