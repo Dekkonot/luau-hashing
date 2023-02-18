@@ -1,7 +1,7 @@
 --selene: allow(incorrect_standard_library_use)
 local sha1 = require("src/init")
 
--- local t = os.clock()
+local t = os.clock()
 
 local hash, digest = sha1("abc")
 assert(hash == "a9993e364706816aba3e25717850c26c9cd0d89d", "(SHA-1) abc hash does not match")
@@ -44,4 +44,4 @@ if true then
 	-- print(`million a hash took {os.clock() - t2}`)
 end
 
--- print("SHA-1 tests completed. Took", os.clock() - t)
+print("SHA-1 tests completed. Took", os.clock() - t)
