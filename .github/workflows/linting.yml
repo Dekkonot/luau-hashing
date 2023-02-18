@@ -1,0 +1,19 @@
+name: Linting
+on:
+  push:
+    paths: '**.luau'
+    branches: 'main'
+  pull_request:
+    paths: '**.luau'
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ok-nick/setup-aftman@v0.3.0
+      
+      - name: Run Selene
+        run: selene src/init.luau
+      
+      - name: Run StyLua
+        run: stylua src/init.luau --check
