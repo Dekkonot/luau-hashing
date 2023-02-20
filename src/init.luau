@@ -55,7 +55,16 @@ local function processBlock(digest: { number }, block: { number }): nil
 	-- Given how much of a maintenance hell it would be, I decided against it.
 	local f, temp
 	for t = 1, 20 do
-		f = bit32.bxor(d, bit32.band(b, bit32.bxor(c, d)))
+		-- F(B,C,D) = CH(X,Y,Z) = ternary for bits
+		-- e.g. if x_bit == 1 then bit = y_bit else bit = z_bit
+		-- reference implemention, this is: (X AND Y) XOR ((NOT X) AND Z)
+		-- However, the XOR is equivalent to addition if you don't carry
+		-- Since we're using bit32 (which truncates), we don't carry.
+		-- So we're left with:
+		-- (X AND Y) + ((NOT X) AND Z)
+		-- Also, NOT X is equivalent to -1 - X
+		-- So we can drop another bitwise op:
+		f = bit32.band(b, c) + bit32.band(-1 - b, d)
 		temp = bit32.band(bit32.lrotate(a, 5) + f + e + 0x5A827999 + block[t])
 		e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 	end
