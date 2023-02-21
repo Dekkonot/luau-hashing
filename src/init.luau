@@ -12,7 +12,7 @@ local function u64ToBytes(value: number): { number }
 	else
 		-- This is technically inefficient but since this function runs once
 		-- per hash, it doesn't matter.
-		return { string.unpack("BBBBBBBB", string.pack("<L", value)) }
+		return { string.unpack("BBBBBBBB", string.pack(">L", value)) }
 	end
 end
 
