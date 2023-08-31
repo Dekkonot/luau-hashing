@@ -23,17 +23,14 @@ local function preprocess(message: string): { number }
 	local msgLen = initLen + 9
 	local nullCount = 64 - msgLen % 64
 
-	local data = table.create(msgLen + nullCount)
+	local data = table.create(msgLen + nullCount, 0x00)
 	for i = 1, initLen do
 		data[i] = string.byte(message, i)
 	end
 	data[initLen + 1] = 0x80
-	for i = 1, nullCount do
-		data[initLen + i + 1] = 0x00
-	end
 
 	local b = u64ToBytes(initLen * 8)
-	table.move(b, 1, 8, #data + 1, data)
+	table.move(b, 1, 8, initLen + nullCount + 2, data)
 
 	-- assert(#data % 64 == 0, "SHA preprocessed message size was wrong")
 	return data
