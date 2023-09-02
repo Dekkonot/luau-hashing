@@ -1,6 +1,9 @@
 --!strict
 --!optimize 2
 
+--- An allocation that is reused for blocks during hashing
+local BLOCK = table.create(80)
+
 --- Takes a u64 and returns it as an array of 8 bytes.
 local function u64ToBytes(value: number): { number }
 	if value < 2 ^ 32 then
@@ -111,7 +114,7 @@ local function sha1(message: string): (string, { number })
 		0xC3D2E1F0,
 	}
 
-	local block = table.create(80)
+	local block = BLOCK
 	for i = 1, #bytes, 64 do
 		local j = i
 		for t = 1, 16 do
