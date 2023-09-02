@@ -49,12 +49,8 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 41, 60 do
-			-- f = bit32.bor(bit32.band(b, c), bit32.band(d, bit32.bor(b, c)))
-			temp = bit32.lrotate(a, 5)
-				+ bit32.bor(bit32.band(b, c), bit32.band(d, bit32.bor(b, c)))
-				+ e
-				+ 0x8F1BBCDC
-				+ block[t]
+			-- f = bit32.band(d, c) + bit32.band(b, bit32.bxor(d, c))
+			temp = bit32.lrotate(a, 5) + bit32.band(d, c) + bit32.band(b, bit32.bxor(d, c)) + e + 0x8F1BBCDC + block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 61, 80 do
