@@ -12,11 +12,10 @@ local function processBlocks(digest: { number }, message: string, start: number,
 	local block = BLOCK
 	local d1, d2, d3, d4, d5 = digest[1], digest[2], digest[3], digest[4], digest[5]
 
-	local a, b, c, d, e
 	for i = start, finish, 64 do
 		-- Fill `block`
 		for t = 1, 16 do
-			a, b, c, d = string.byte(message, i, i + 3)
+			local a, b, c, d = string.byte(message, i, i + 3)
 			block[t] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
 			i += 4
 		end
@@ -27,8 +26,8 @@ local function processBlocks(digest: { number }, message: string, start: number,
 		end
 
 		-- Standard SHA1 rounds
-		a, b, c, d, e = d1, d2, d3, d4, d5
-		local f, temp
+		local a, b, c, d, e = d1, d2, d3, d4, d5
+		local temp
 		for t = 1, 20 do
 			-- F(B,C,D) = CH(X,Y,Z) = ternary for bits
 			-- e.g. if x_bit == 1 then bit = y_bit else bit = z_bit
@@ -39,23 +38,28 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			-- (X AND Y) + ((NOT X) AND Z)
 			-- Also, NOT X is equivalent to -1 - X
 			-- So we can drop another bitwise op:
-			f = bit32.band(b, c) + bit32.band(-1 - b, d)
-			temp = bit32.lrotate(a, 5) + f + e + 0x5A827999 + block[t]
+
+			-- f = bit32.band(b, c) + bit32.band(-1 - b, d)
+			temp = bit32.lrotate(a, 5) + bit32.band(b, c) + bit32.band(-1 - b, d) + e + 0x5A827999 + block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 21, 40 do
-			f = bit32.bxor(b, c, d)
-			temp = bit32.lrotate(a, 5) + f + e + 0x6ED9EBA1 + block[t]
+			-- f = bit32.bxor(b, c, d)
+			temp = bit32.lrotate(a, 5) + bit32.bxor(b, c, d) + e + 0x6ED9EBA1 + block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 41, 60 do
-			f = bit32.bor(bit32.band(b, c), bit32.band(d, bit32.bor(b, c)))
-			temp = bit32.lrotate(a, 5) + f + e + 0x8F1BBCDC + block[t]
+			-- f = bit32.bor(bit32.band(b, c), bit32.band(d, bit32.bor(b, c)))
+			temp = bit32.lrotate(a, 5)
+				+ bit32.bor(bit32.band(b, c), bit32.band(d, bit32.bor(b, c)))
+				+ e
+				+ 0x8F1BBCDC
+				+ block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 61, 80 do
-			f = bit32.bxor(b, c, d)
-			temp = bit32.lrotate(a, 5) + f + e + 0xCA62C1D6 + block[t]
+			-- f = bit32.bxor(b, c, d)
+			temp = bit32.lrotate(a, 5) + bit32.bxor(b, c, d) + e + 0xCA62C1D6 + block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 
