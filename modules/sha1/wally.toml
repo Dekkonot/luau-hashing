@@ -2,12 +2,12 @@
 name = "dekkonot/sha1"
 description = "Implementation of the SHA-1 hashing algorithm"
 license = "MIT"
-registry = "https://github.com/UpliftGames/wally-index"
+registry = "https://github.com/UpliftGames/wally-test-index"
 realm = "shared"
 
 version = "1.0.2"
 
-include = ["src", "src/*.luau", "default.project.json", "wally.toml", "LICENSE"]
+include = ["*.luau", "wally.toml"]
 exclude = ["*"]
 
 [dependencies]
