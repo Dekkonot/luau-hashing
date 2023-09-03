@@ -1,3 +1,6 @@
+--!strict
+-- !optimize 2
+
 --stylua: ignore
 local K = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -10,8 +13,13 @@ local K = {
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 }
 
+--- An allocation that is reused for blocks during hashing
 local BLOCK = table.create(64)
 
+--[=[
+	Processes `message` from byte `start` to byte `finish` using `digest`.
+	It is assumed that `finish - start % 64 == 0`.
+]=]
 local function processBlocks(digest: { number }, message: string, start: number, finish: number)
 	local block = BLOCK
 	local d1, d2, d3, d4 = digest[1], digest[2], digest[3], digest[4]
@@ -82,6 +90,16 @@ local function processBlocks(digest: { number }, message: string, start: number,
 	digest[8] = d8
 end
 
+--[=[
+	Computes the SHA-256 hash for `message` and returns it.
+	This function returns both a hexadecimal encoded string of the hash
+	and returns a **read-only** table containing the eight 32-bit integers
+	that make up the hash.
+	
+	@param message -- The payload to compute the SHA-256 hash of
+	@return string -- The computed SHA-256 hash as a string of hexadecimal digits
+	@return {number} -- The computed SHA-256 hash as an array of 8 integers
+]=]
 local function sha256(message: string): (string, { number })
 	local digest = {
 		0x6a09e667,
