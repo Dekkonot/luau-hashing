@@ -1,6 +1,6 @@
 {
-    "name": "sha1",
+    "name": "luau-hashing",
     "tree": {
-        "$path": "src"
+        "$path": "modules"
     }
 }
