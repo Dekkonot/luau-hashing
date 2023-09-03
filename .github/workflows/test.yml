@@ -18,6 +18,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: 'Run SHA-1'
+      - name: 'Test SHA-1'
         run: |
           ./luau tests/sha1.luau
