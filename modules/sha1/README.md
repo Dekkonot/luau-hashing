@@ -1,4 +1,4 @@
-# SHA1 Luau
+# SHA-1 Luau
 
 A pure Luau implementation of the SHA-1 hashing algorithm. Blazing fast (for Luau) and well-tested.
 
