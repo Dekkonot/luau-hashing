@@ -13,7 +13,7 @@ jobs:
       - uses: ok-nick/setup-aftman@v0.3.0
       
       - name: Run Selene
-        run: selene src/init.luau
+        run: selene modules
       
       - name: Run StyLua
-        run: stylua src/init.luau --check
+        run: stylua modules --check
