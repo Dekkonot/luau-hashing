@@ -1,5 +1,5 @@
 --selene: allow(incorrect_standard_library_use)
-local sha1 = require("src/init")
+local sha1 = require("modules/sha1/init")
 
 local t = os.clock()
 local startgc = gcinfo()
