@@ -25,3 +25,7 @@ jobs:
       - name: 'Test SHA-256'
         run: |
           ./luau tests/sha256.luau
+
+      - name: 'Test SHA-512'
+        run: |
+          ./luau tests/sha512.luau
