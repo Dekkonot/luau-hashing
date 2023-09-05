@@ -1,0 +1,31 @@
+name: Tests (Codegen)
+on:
+  push:
+    paths: '**.luau'
+    branches: 'main'
+  pull_request:
+    paths: '**.luau'
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 'Install Luau'
+        run: |
+          gh release download --repo Roblox/luau --pattern luau-ubuntu.zip
+          unzip luau-ubuntu.zip
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: 'Test SHA-1'
+        run: |
+          ./luau tests/sha1.luau --codegen
+
+      - name: 'Test SHA-256'
+        run: |
+          ./luau tests/sha256.luau --codegen
+
+      - name: 'Test SHA-512'
+        run: |
+          ./luau tests/sha512.luau --codegen
