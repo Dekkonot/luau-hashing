@@ -145,7 +145,7 @@ local function processBlocks(
 			-- properly carrying bits. So, we have to simulate that.
 			-- This is the equivalent to temp & 0xFFFF_FFFF, which
 			-- truncates the integer for us.
-			local temp2 = temp % 2 ^ 32
+			block_back[t] = temp % 2 ^ 32
 
 			block_front[t] = block_front[t - 16]
 				+ s0_front
@@ -154,8 +154,6 @@ local function processBlocks(
 				-- After that, any leftover bits are shifted down until
 				-- they can be added safely
 				+ math.floor(temp / 2 ^ 32) -- TODO replace with integer division
-
-			block_back[t] = temp2
 
 			-- block_front[t] %= 2 ^ 32 -- unnecessary but good for debugging
 		end
