@@ -1,5 +1,5 @@
 --!strict
--- !optimize 2
+--!optimize 2
 
 --stylua: ignore
 local K = {
