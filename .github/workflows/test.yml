@@ -33,3 +33,7 @@ jobs:
       - name: 'Test SHA-512'
         run: |
           ./luau tests/sha512.luau
+
+      - name: 'Test SHA-384'
+        run: |
+          ./luau tests/sha384.luau

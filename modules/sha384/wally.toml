@@ -1,0 +1,13 @@
+[package]
+name = "dekkonot/sha384"
+description = "Implementation of the SHA-384 hashing algorithm"
+license = "MIT"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+version = "1.0.0"
+
+include = ["*.luau", "wally.toml"]
+exclude = ["*"]
+
+[dependencies]
