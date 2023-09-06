@@ -18,7 +18,7 @@ local BLOCK = table.create(64)
 
 --[=[
 	Processes `message` from byte `start` to byte `finish` using `digest`.
-	It is assumed that `finish - start % 64 == 0`.
+	It is assumed that `(finish - start) % 64 == 0`.
 ]=]
 local function processBlocks(digest: { number }, message: string, start: number, finish: number)
 	local block = BLOCK
