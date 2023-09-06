@@ -16,10 +16,6 @@ assert(digest[8] == 0xf20015ad, "(SHA-256) eighth word of abc hash was incorrect
 assert(table.isfrozen(digest), "(SHA-256) returned digest of abc hash was not frozen")
 
 assert(
-	sha256("abc") == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
-	"(SHA-256) abc hash does not match"
-)
-assert(
 	sha256("") == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 	"(SHA-256) empty hash does not match"
 )
