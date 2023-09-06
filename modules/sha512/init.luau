@@ -44,7 +44,9 @@ local K_BACK = {
     0x9c100d4c, 0xcb3e42b6, 0xfc657e2a, 0x3ad6faec, 0x4a475817,
 }
 
--- little sigma, or ligma if you will
+--[=[
+	The 'little sigma 0' function for the SHA-512 block fill operation.
+]=]
 local function lil_sig0(front: number, back: number): (number, number)
 	-- (w[i-15] rightrotate 1) xor (w[i-15] rightrotate 8) xor (w[i-15] rightshift 7)
 	-- rrotate(x, n) = (x >> n) | (x << 32 - n)
@@ -64,6 +66,9 @@ local function lil_sig0(front: number, back: number): (number, number)
 	)
 end
 
+--[=[
+	The 'little sigma 1' function for the SHA-512 block fill operation.
+]=]
 local function lil_sig1(front: number, back: number): (number, number)
 	-- (w[i-2] rightrotate 19) xor (w[i-2] rightrotate 61) xor (w[i-2] rightshift 6)
 	-- rrotate(x, n) = (x >> n) | (x << 32 - n) if x <= 32
@@ -82,6 +87,9 @@ local function lil_sig1(front: number, back: number): (number, number)
 	)
 end
 
+--[=[
+	The 'big sigma 0' function for the SHA-512 compression rounds.
+]=]
 local function big_sig0(front: number, back: number): (number, number)
 	--(a rightrotate 28) xor (a rightrotate 34) xor (a rightrotate 39)
 	-- Sig0(x) = (x >> 28) | x >> 4) ^ (x >> 2 | x << 30) ^ (x >> 7 | x << 25)
@@ -97,6 +105,9 @@ local function big_sig0(front: number, back: number): (number, number)
 	)
 end
 
+--[=[
+	The 'big sigma 1' function for the SHA-512 compression rounds.
+]=]
 local function big_sig1(front: number, back: number): (number, number)
 	--(e rightrotate 14) xor (e rightrotate 18) xor (e rightrotate 41)
 	-- Sig1(x) = (x >> 14 | x << 18) ^ (x >> 18 | x << 14) ^ (x >> 9 | x << 23)
@@ -112,6 +123,11 @@ local function big_sig1(front: number, back: number): (number, number)
 	)
 end
 
+--[=[
+	Proceeses `message` as block of 128 bytes from `start` to `finish`.
+
+	Expects that `(finish - start) % 128 == 0`.
+]=]
 local function processBlocks(
 	digestFront: { number },
 	digestBack: { number },
@@ -240,6 +256,19 @@ local function processBlocks(
 	digestFront[8], digestBack[8] = d8_front, d8_back
 end
 
+--[=[
+	Computes the SHA-512 hash for `message` and returns it.
+	This function returns both a hexadecimal encoded string of the hash
+	and returns a **read-only** table containing sixteen 32-bit integers
+	that make up the hash.
+
+	This functions will raise an error if the message passed is over `2^50` bytes
+	in length. This is due to a Luau limitation.
+	
+	@param message -- The payload to compute the SHA-512 hash of
+	@return string -- The computed SHA-512 hash as a string of hexadecimal digits
+	@return {number} -- The computed SHA-512 hash as an array of 16 integers
+]=]
 local function sha512(message: string): string
 	local digest_front =
 		{ 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }
