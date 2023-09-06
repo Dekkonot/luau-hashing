@@ -26,6 +26,10 @@ jobs:
         run: |
           ./luau tests/sha256.luau --codegen
 
+      - name: 'Test SHA-224'
+        run: |
+          ./luau tests/sha224.luau --codegen
+
       - name: 'Test SHA-512'
         run: |
           ./luau tests/sha512.luau --codegen
