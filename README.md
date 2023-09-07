@@ -10,4 +10,6 @@ Modules reside in their own folders under `modules` and have their own READMEs w
 |:---------------------------:|:---------------------
 | [`sha-1`](modules/sha1)     | `dekkonot/sha1@1.0`
 | [`sha-256`](modules/sha256) | `dekkonot/sha256@1.0`
+| [`sha-224`](modules/sha224) | `dekkonot/sha224@1.0`
 | [`sha-512`](modules/sha512) | `dekkonot/sha512@1.0`
+| [`sha-384`](modules/sha384) | `dekkonot/sha384@1.0`
