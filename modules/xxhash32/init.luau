@@ -20,15 +20,9 @@ local function xxhash32(message: string, seed: number?): number
 	local rSeed = if seed == nil then 0 else seed % 2 ^ 32
 	local messageLen = #message
 
-	local words = table.create(math.ceil(messageLen / 4))
-	local leftover = messageLen % 4
-	local n = 1
-	for i = 1, messageLen - leftover, 4 do
-		words[n] = string.unpack("<I4", message, i)
-		n += 1
-	end
 	local wordC = 1
 
+	local i = 1
 	local digest
 	if messageLen >= 16 then
 		-- We don't need to worry about overflow for addition here
@@ -37,11 +31,13 @@ local function xxhash32(message: string, seed: number?): number
 		local accum3 = rSeed
 		local accum4 = rSeed - PRIME_1
 		for _ = 0, messageLen - 16, 16 do
-			accum1 = mult(bit32.lrotate(accum1 + mult(words[wordC], PRIME_2), 13), PRIME_1)
-			accum2 = mult(bit32.lrotate(accum2 + mult(words[wordC + 1], PRIME_2), 13), PRIME_1)
-			accum3 = mult(bit32.lrotate(accum3 + mult(words[wordC + 2], PRIME_2), 13), PRIME_1)
-			accum4 = mult(bit32.lrotate(accum4 + mult(words[wordC + 3], PRIME_2), 13), PRIME_1)
+			local a, b, c, d = string.unpack("I4I4I4I4", message, i)
+			accum1 = mult(bit32.lrotate(accum1 + mult(a, PRIME_2), 13), PRIME_1)
+			accum2 = mult(bit32.lrotate(accum2 + mult(b, PRIME_2), 13), PRIME_1)
+			accum3 = mult(bit32.lrotate(accum3 + mult(c, PRIME_2), 13), PRIME_1)
+			accum4 = mult(bit32.lrotate(accum4 + mult(d, PRIME_2), 13), PRIME_1)
 			wordC += 4
+			i += 16
 		end
 		digest = bit32.lrotate(accum1, 1)
 			+ bit32.lrotate(accum2, 7)
@@ -52,14 +48,15 @@ local function xxhash32(message: string, seed: number?): number
 	end
 	digest = (digest + messageLen) % 2 ^ 32
 
-	for _ = wordC, n - 1 do
-		digest += mult(words[wordC], PRIME_3)
+	for _ = wordC, math.floor(messageLen / 4) do
+		digest += mult(string.unpack("I4", message, i), PRIME_3)
 		digest = mult(bit32.lrotate(digest, 17), PRIME_4)
 		wordC += 1
+		i += 4
 	end
 
-	for i = -leftover, -1 do
-		digest += mult(string.byte(message, i), PRIME_5)
+	for j = -(messageLen % 4), -1 do
+		digest += mult(string.byte(message, j), PRIME_5)
 		digest = mult(bit32.lrotate(digest, 11), PRIME_1)
 	end
 
