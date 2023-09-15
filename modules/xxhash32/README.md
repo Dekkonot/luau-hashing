@@ -1,4 +1,4 @@
-# SHA-512 Luau
+# XXH32 Luau
 
 A pure Luau implementation of the XXH32 hashing algorithm. Blazing fast (for Luau) and well-tested.
 
