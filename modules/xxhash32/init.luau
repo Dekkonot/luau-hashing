@@ -16,6 +16,15 @@ local function mult(a: number, b: number): number
 	return bit32.lshift((ah * bl) + (al * bh), 16) + (al * bl)
 end
 
+--[=[
+	Computes the XXH32 hash for `message` and returns it. If specified, `seed`
+	is used as a seed for the hash. It defaults to `0`.
+
+	This function returns the 32-bit integer that's the result of the hash.
+	
+	@param message -- The message to compute the XXHASH32 of
+	@param seed -- The seed to use for the hashing algorithm (defaults to `0`) 
+]=]
 local function xxhash32(message: string, seed: number?): number
 	local rSeed = if seed == nil then 0 else seed % 2 ^ 32
 	local messageLen = #message
