@@ -37,3 +37,7 @@ jobs:
       - name: 'Test SHA-384'
         run: |
           ./luau tests/sha384.luau
+
+      - name: 'Test XXH32'
+        run: |
+          ./luau tests/xxhash32.luau
