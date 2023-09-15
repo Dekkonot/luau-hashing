@@ -31,7 +31,7 @@ local function xxhash32(message: string, seed: number?): number
 		local accum3 = rSeed
 		local accum4 = rSeed - PRIME_1
 		for _ = 0, messageLen - 16, 16 do
-			local a, b, c, d = string.unpack("I4I4I4I4", message, i)
+			local a, b, c, d = string.unpack("<I4I4I4I4", message, i)
 			accum1 = mult(bit32.lrotate(accum1 + mult(a, PRIME_2), 13), PRIME_1)
 			accum2 = mult(bit32.lrotate(accum2 + mult(b, PRIME_2), 13), PRIME_1)
 			accum3 = mult(bit32.lrotate(accum3 + mult(c, PRIME_2), 13), PRIME_1)
@@ -49,7 +49,7 @@ local function xxhash32(message: string, seed: number?): number
 	digest = (digest + messageLen) % 2 ^ 32
 
 	for _ = wordC, math.floor(messageLen / 4) do
-		digest += mult(string.unpack("I4", message, i), PRIME_3)
+		digest += mult(string.unpack("<I4", message, i), PRIME_3)
 		digest = mult(bit32.lrotate(digest, 17), PRIME_4)
 		wordC += 1
 		i += 4
