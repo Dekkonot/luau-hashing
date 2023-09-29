@@ -1,0 +1,13 @@
+[package]
+name = "dekkonot/blake2s"
+description = "Implementation of the BLAKE2s hashing algorithm"
+license = "MIT"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+version = "1.0.2"
+
+include = ["*.luau", "wally.toml"]
+exclude = ["*"]
+
+[dependencies]
