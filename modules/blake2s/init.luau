@@ -1,8 +1,10 @@
 --!strict
 --!optimize 2
 
+--- The initial values used for the hasher state.
 local IV = { 0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19 }
 
+--- A list of offsets to use for each round in the compression algorithm.
 local SIGMA = {
 	{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 },
 	{ 15, 11, 5, 9, 10, 16, 14, 7, 2, 13, 1, 3, 12, 8, 6, 4 },
@@ -16,6 +18,13 @@ local SIGMA = {
 	{ 11, 3, 9, 5, 8, 7, 2, 6, 16, 12, 10, 15, 4, 13, 14, 1 },
 }
 
+--[=[
+	Swaps the byte order of `n`. This is in effect changing the endianness
+	of an integer.
+
+	@param n The number to swap the byte order of.
+	@return The endianness-swapped number.
+]=]
 local function byteswap(n: number): number
 	return bit32.bor(
 		bit32.lshift(n, 24),
@@ -25,8 +34,18 @@ local function byteswap(n: number): number
 	)
 end
 
---- Mixes `x` and `y` into the four words `a`, `b`, `c`, and `d` from
---- a working vector.
+--[=[
+	Mixes `x` and `y` into `v`, using the words located at
+	`a`, `b`, `c`, and `d` in the vector.
+
+	@param v A vector utilized internally for the state of the hasher
+	@param a The location of a word in `v`
+	@param b The location of a word in `v`
+	@param c The location of a word in `v`
+	@param d The location of a word in `v`
+	@param x A word to mix into the vector using the provided locations
+	@param y A word to mix into the vector using the provided locations
+]=]
 local function G(v: { number }, a, b, c, d, x, y)
 	-- Addition would be MOD 2 ^ 32 but bit32 takes care of that :D
 	v[a] += v[b] + x
@@ -39,11 +58,16 @@ local function G(v: { number }, a, b, c, d, x, y)
 	v[b] = bit32.rrotate(bit32.bxor(v[b], v[c]), 7)
 end
 
---- Compression function
+--[=[
+	The BLAKE2S compression function.
+
+	@param h The internal digest for the algorithm
+	@param m A block of bytes utilized for rounds
+	@param t A counter for how many bytes fed into the hasher so far, including this set
+	@param f Whether or not this call is the final one
+]=]
 local function F(h: { number }, m: { number }, t: number, f: boolean)
-    -- t = offset for bytes processed
-    -- stylua: ignore
-    local v = table.create(16)
+	local v = table.create(16)
 	for i = 1, 8 do
 		v[i] = h[i]
 		v[i + 8] = IV[i]
@@ -77,18 +101,19 @@ local function F(h: { number }, m: { number }, t: number, f: boolean)
 	h[8] = bit32.bxor(h[8], v[8], v[8 + 8])
 end
 
--- w=32, r=10, bb=64, nn=[1,32], kk=[0,32], ll=[0,2^64]
--- iv = initial values
--- sigma = message word permutations
--- p = parameter block
--- m = 16 words of message block
--- h = digest
--- d = input block of bb bytes
--- t = byte offset
--- f = last block flag
--- w = bits in word, r = rounds in F, bb = block bytes
--- nn = hash bytes, kk = key bytes, ll = input bytes
-local function blake2s(message: string, outSize: number, key: string?)
+--[=[
+	Calculates the BLAKE2S hash of `message` and emits it as a hash of `outSize`
+	bytes. If provided, `key` is used as a [pepper][Pepper] for the hash.
+
+	@param message The string to perform the hashing algorithm on
+	@param outSize The length of the returned value in bytes. Must be between 1 and 32.
+	@param key A pepper to use when performing the hashing algorithm. Must be no longer than 32 bytes.
+
+	@return The computed hash as a hexadecimal string. This string will be `outSize * 2` bytes long.
+
+	[Pepper]: https://en.wikipedia.org/wiki/Pepper_(cryptography)
+]=]
+local function blake2s(message: string, outSize: number, key: string?): string
 	local rKey = if key then key else ""
 	local keyLen = #rKey
 
@@ -115,8 +140,14 @@ local function blake2s(message: string, outSize: number, key: string?)
 		F(h, block, 64, false)
 	end
 
-	local leftover = messageLen % 64
-	for i = 1, messageLen - leftover, 64 do
+	-- We have to process a final non-zero block, so if the number is a
+	-- clean multiple of 64 we have to stop early.
+	local finish = messageLen - messageLen % 64
+	if messageLen % 64 == 0 then
+		finish -= 64
+	end
+
+	for i = 1, finish, 64 do
 		for j = 1, 16 do
 			local d, c, b, a = string.byte(message, i, i + 3)
 			block[j] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
@@ -126,20 +157,29 @@ local function blake2s(message: string, outSize: number, key: string?)
 		F(h, block, t, false)
 	end
 
-	local finalMessage = table.concat({
-		if leftover ~= 0 then string.sub(message, -leftover) else "",
-		string.rep("\0", -leftover + 64),
-	})
-
-	local i = 1
-	for j = 1, 16 do
-		local d, c, b, a = string.byte(finalMessage, i, i + 3)
-		block[j] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
-		i += 4
+	-- There's no way to tell the difference between a 0 length message and
+	-- one that's exactly 64 bytes using the method we use, so it has to
+	-- be special cased.
+	if messageLen == 0 then
+		for i = 1, 16 do
+			block[i] = 0
+		end
+	else
+		local finalMessage = table.concat({
+			string.sub(message, -(messageLen - finish)),
+			string.rep("\0", 64 - (messageLen - finish)),
+		})
+		local i = 1
+		for j = 1, 16 do
+			local d, c, b, a = string.byte(finalMessage, i, i + 3)
+			block[j] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
+			i += 4
+		end
+		t += messageLen - finish
 	end
-	t += leftover
 	F(h, block, t, true)
 
+	-- TODO efficiency
 	local digest = string.format(
 		"%08x%08x%08x%08x%08x%08x%08x%08x",
 		byteswap(h[1]),
