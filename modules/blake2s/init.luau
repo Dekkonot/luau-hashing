@@ -35,7 +35,7 @@ local function byteswap(n: number): number
 end
 
 --[=[
-	The BLAKE2S compression function.
+	The BLAKE2s compression function.
 
 	@param h The internal digest for the algorithm
 	@param m A block of bytes utilized for rounds
@@ -150,7 +150,7 @@ local function F(h: { number }, m: { number }, t: number, f: boolean)
 end
 
 --[=[
-	Calculates the BLAKE2S hash of `message` and emits it as a hash of `outSize`
+	Calculates the BLAKE2s hash of `message` and emits it as a hash of `outSize`
 	bytes. If provided, `key` is used as a [pepper][Pepper] for the hash.
 
 	@param message The string to perform the hashing algorithm on
