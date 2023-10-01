@@ -23,6 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: 'Test'
-        run: |
-          ./luau tests/${{ matrix.module}}.luau
-          ./luau tests/${{ matrix.module}}.luau --codegen
+        run: ./luau tests/${{ matrix.module}}.luau
+
+      - name: 'Test (Codegen)'
+        run: ./luau tests/${{ matrix.module}}.luau --codegen
