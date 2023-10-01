@@ -35,30 +35,6 @@ local function byteswap(n: number): number
 end
 
 --[=[
-	Mixes `x` and `y` into `v`, using the words located at
-	`a`, `b`, `c`, and `d` in the vector.
-
-	@param v A vector utilized internally for the state of the hasher
-	@param a The location of a word in `v`
-	@param b The location of a word in `v`
-	@param c The location of a word in `v`
-	@param d The location of a word in `v`
-	@param x A word to mix into the vector using the provided locations
-	@param y A word to mix into the vector using the provided locations
-]=]
-local function G(v: { number }, a, b, c, d, x, y)
-	-- Addition would be MOD 2 ^ 32 but bit32 takes care of that :D
-	v[a] += v[b] + x
-	v[d] = bit32.rrotate(bit32.bxor(v[d], v[a]), 16)
-	v[c] += v[d]
-	v[b] = bit32.rrotate(bit32.bxor(v[b], v[c]), 12)
-	v[a] += v[b] + y
-	v[d] = bit32.rrotate(bit32.bxor(v[d], v[a]), 8)
-	v[c] += v[d]
-	v[b] = bit32.rrotate(bit32.bxor(v[b], v[c]), 7)
-end
-
---[=[
 	The BLAKE2S compression function.
 
 	@param h The internal digest for the algorithm
@@ -67,38 +43,110 @@ end
 	@param f Whether or not this call is the final one
 ]=]
 local function F(h: { number }, m: { number }, t: number, f: boolean)
-	local v = table.create(16)
-	for i = 1, 8 do
-		v[i] = h[i]
-		v[i + 8] = IV[i]
-	end
-	v[13] = bit32.bxor(v[13], t % 2 ^ 32)
+	-- Conventional wisdom is to use an array here but that's awful for
+	-- performance. So, we do it with 16 variables.
+	-- Registries suffer but that's a small price to pay.
+	local v01, v02, v03, v04, v05, v06, v07, v08 = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
+	local v09, v10, v11, v12, v13, v14, v15, v16 = IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7], IV[8]
+	v13 = bit32.bxor(v13, t % 2 ^ 32)
 	-- this is not using an rshift because `t` might be very big
-	v[14] = bit32.bxor(v[14], math.floor(t / 2 ^ 32))
+	v14 = bit32.bxor(v14, math.floor(t / 2 ^ 32))
 	if f then
-		v[15] = bit32.bnot(v[15])
+		v15 = bit32.bnot(v15)
 	end
 
+	-- G is a mixer function for the lanes of a block.
+	-- It's defined inline here for performance.
 	for _, s in SIGMA do
-		G(v, 1, 5, 9, 13, m[s[1]], m[s[2]])
-		G(v, 2, 6, 10, 14, m[s[3]], m[s[4]])
-		G(v, 3, 7, 11, 15, m[s[5]], m[s[6]])
-		G(v, 4, 8, 12, 16, m[s[7]], m[s[8]])
+		-- G(v, 1, 5, 9, 13, m[s[1]], m[s[2]])
+		v01 += v05 + m[s[1]]
+		v13 = bit32.rrotate(bit32.bxor(v13, v01), 16)
+		v09 += v13
+		v05 = bit32.rrotate(bit32.bxor(v05, v09), 12)
+		v01 += v05 + m[s[2]]
+		v13 = bit32.rrotate(bit32.bxor(v13, v01), 8)
+		v09 += v13
+		v05 = bit32.rrotate(bit32.bxor(v05, v09), 7)
 
-		G(v, 1, 6, 11, 16, m[s[9]], m[s[10]])
-		G(v, 2, 7, 12, 13, m[s[11]], m[s[12]])
-		G(v, 3, 8, 9, 14, m[s[13]], m[s[14]])
-		G(v, 4, 5, 10, 15, m[s[15]], m[s[16]])
+		-- G(v, 2, 6, 10, 14, m[s[3]], m[s[4]])
+		v02 += v06 + m[s[3]]
+		v14 = bit32.rrotate(bit32.bxor(v14, v02), 16)
+		v10 += v14
+		v06 = bit32.rrotate(bit32.bxor(v06, v10), 12)
+		v02 += v06 + m[s[4]]
+		v14 = bit32.rrotate(bit32.bxor(v14, v02), 8)
+		v10 += v14
+		v06 = bit32.rrotate(bit32.bxor(v06, v10), 7)
+
+		-- G(v, 3, 7, 11, 15, m[s[5]], m[s[6]])
+		v03 += v07 + m[s[5]]
+		v15 = bit32.rrotate(bit32.bxor(v15, v03), 16)
+		v11 += v15
+		v07 = bit32.rrotate(bit32.bxor(v07, v11), 12)
+		v03 += v07 + m[s[6]]
+		v15 = bit32.rrotate(bit32.bxor(v15, v03), 8)
+		v11 += v15
+		v07 = bit32.rrotate(bit32.bxor(v07, v11), 7)
+
+		-- G(v, 4, 8, 12, 16, m[s[7]], m[s[8]])
+		v04 += v08 + m[s[7]]
+		v16 = bit32.rrotate(bit32.bxor(v16, v04), 16)
+		v12 += v16
+		v08 = bit32.rrotate(bit32.bxor(v08, v12), 12)
+		v04 += v08 + m[s[8]]
+		v16 = bit32.rrotate(bit32.bxor(v16, v04), 8)
+		v12 += v16
+		v08 = bit32.rrotate(bit32.bxor(v08, v12), 7)
+
+		-- G(v, 1, 6, 11, 16, m[s[9]], m[s[10]])
+		v01 += v06 + m[s[9]]
+		v16 = bit32.rrotate(bit32.bxor(v16, v01), 16)
+		v11 += v16
+		v06 = bit32.rrotate(bit32.bxor(v06, v11), 12)
+		v01 += v06 + m[s[10]]
+		v16 = bit32.rrotate(bit32.bxor(v16, v01), 8)
+		v11 += v16
+		v06 = bit32.rrotate(bit32.bxor(v06, v11), 7)
+
+		-- G(v, 2, 7, 12, 13, m[s[11]], m[s[12]])
+		v02 += v07 + m[s[11]]
+		v13 = bit32.rrotate(bit32.bxor(v13, v02), 16)
+		v12 += v13
+		v07 = bit32.rrotate(bit32.bxor(v07, v12), 12)
+		v02 += v07 + m[s[12]]
+		v13 = bit32.rrotate(bit32.bxor(v13, v02), 8)
+		v12 += v13
+		v07 = bit32.rrotate(bit32.bxor(v07, v12), 7)
+
+		-- G(v, 3, 8, 9, 14, m[s[13]], m[s[14]])
+		v03 += v08 + m[s[13]]
+		v14 = bit32.rrotate(bit32.bxor(v14, v03), 16)
+		v09 += v14
+		v08 = bit32.rrotate(bit32.bxor(v08, v09), 12)
+		v03 += v08 + m[s[14]]
+		v14 = bit32.rrotate(bit32.bxor(v14, v03), 8)
+		v09 += v14
+		v08 = bit32.rrotate(bit32.bxor(v08, v09), 7)
+
+		-- G(v, 4, 5, 10, 15, m[s[15]], m[s[16]])
+		v04 += v05 + m[s[15]]
+		v15 = bit32.rrotate(bit32.bxor(v15, v04), 16)
+		v10 += v15
+		v05 = bit32.rrotate(bit32.bxor(v05, v10), 12)
+		v04 += v05 + m[s[16]]
+		v15 = bit32.rrotate(bit32.bxor(v15, v04), 8)
+		v10 += v15
+		v05 = bit32.rrotate(bit32.bxor(v05, v10), 7)
 	end
 
-	h[1] = bit32.bxor(h[1], v[1], v[1 + 8])
-	h[2] = bit32.bxor(h[2], v[2], v[2 + 8])
-	h[3] = bit32.bxor(h[3], v[3], v[3 + 8])
-	h[4] = bit32.bxor(h[4], v[4], v[4 + 8])
-	h[5] = bit32.bxor(h[5], v[5], v[5 + 8])
-	h[6] = bit32.bxor(h[6], v[6], v[6 + 8])
-	h[7] = bit32.bxor(h[7], v[7], v[7 + 8])
-	h[8] = bit32.bxor(h[8], v[8], v[8 + 8])
+	h[1] = bit32.bxor(h[1], v01, v09)
+	h[2] = bit32.bxor(h[2], v02, v10)
+	h[3] = bit32.bxor(h[3], v03, v11)
+	h[4] = bit32.bxor(h[4], v04, v12)
+	h[5] = bit32.bxor(h[5], v05, v13)
+	h[6] = bit32.bxor(h[6], v06, v14)
+	h[7] = bit32.bxor(h[7], v07, v15)
+	h[8] = bit32.bxor(h[8], v08, v16)
 end
 
 --[=[
