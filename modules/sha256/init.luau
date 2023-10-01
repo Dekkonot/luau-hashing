@@ -114,7 +114,7 @@ local function sha256(message: string): (string, { number })
 
 	local messageLen = #message
 	local leftover = messageLen % 64
-	if messageLen / 64 > 1 then
+	if messageLen >= 64 then
 		processBlocks(digest, message, 1, messageLen - leftover)
 	end
 
