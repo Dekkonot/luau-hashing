@@ -288,7 +288,7 @@ local function sha384(message: string): string
 
 	-- SHA-384 has a block size of 1024 bits or 128 bytes
 	local leftover = messageLen % 128
-	if messageLen / 128 > 1 then
+	if messageLen >= 128 then
 		processBlocks(digest_front, digest_back, message, 1, messageLen - leftover)
 	end
 	local finalMessage = {
