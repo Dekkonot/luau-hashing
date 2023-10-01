@@ -123,10 +123,10 @@ local function blake2s(message: string, outSize: number, key: string?): string
 	local h = table.clone(IV)
 	h[1] = bit32.bxor(h[1], 0x0101_0000, bit32.lshift(keyLen, 8), outSize)
 
+	local block = table.create(16)
 	local messageLen = #message
 	local t = if keyLen > 0 then 64 else 0
 
-	local block = table.create(16)
 	if keyLen > 0 then
 		-- This is technically bad for performance, but I don't really care
 		-- since it happens at most once per hash
@@ -137,17 +137,15 @@ local function blake2s(message: string, outSize: number, key: string?): string
 			block[i] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
 			j += 4
 		end
-		F(h, block, 64, false)
+		-- Special case: is there even a message?
+		F(h, block, 64, messageLen == 0)
 	end
 
-	-- We have to process a final non-zero block, so if the number is a
-	-- clean multiple of 64 we have to stop early.
-	local finish = messageLen - messageLen % 64
-	if messageLen % 64 == 0 then
-		finish -= 64
-	end
-
-	for i = 1, finish, 64 do
+	local leftover = messageLen % 64
+	-- If the message is an even multiple of 64, we need to cut ourselves short
+	-- so that we don't skip the final block or process an empty one
+	local offset = if leftover == 0 then 64 else leftover
+	for i = 1, messageLen - offset, 64 do
 		for j = 1, 16 do
 			local d, c, b, a = string.byte(message, i, i + 3)
 			block[j] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
@@ -157,27 +155,21 @@ local function blake2s(message: string, outSize: number, key: string?): string
 		F(h, block, t, false)
 	end
 
-	-- There's no way to tell the difference between a 0 length message and
-	-- one that's exactly 64 bytes using the method we use, so it has to
-	-- be special cased.
-	if messageLen == 0 then
-		for i = 1, 16 do
-			block[i] = 0
-		end
-	else
-		local finalMessage = table.concat({
-			string.sub(message, -(messageLen - finish)),
-			string.rep("\0", 64 - (messageLen - finish)),
-		})
+	-- We have to push at least one block, regardless of message length
+	-- However, if there's a key and the message is empty, we need to skip it
+	if keyLen == 0 or messageLen > 0 then
+		-- TODO find out if this has a significant performance cost
+		local messageSnippet = string.sub(message, -offset)
+		local finalMessage = messageSnippet .. string.rep("\0", 64)
+
 		local i = 1
 		for j = 1, 16 do
 			local d, c, b, a = string.byte(finalMessage, i, i + 3)
 			block[j] = bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d)
 			i += 4
 		end
-		t += messageLen - finish
+		F(h, block, t + #messageSnippet, true)
 	end
-	F(h, block, t, true)
 
 	-- TODO efficiency
 	local digest = string.format(
