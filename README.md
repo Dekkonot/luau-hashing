@@ -14,3 +14,4 @@ Modules reside in their own folders under `modules` and have their own READMEs w
 | [`sha-512`](modules/sha512)    | `dekkonot/sha512@1.0`
 | [`sha-384`](modules/sha384)    | `dekkonot/sha384@1.0`
 | [`xxhash32`](modules/xxhash32) | `dekkonot/xxhash32@1.0`
+| [`blake2s`](modules/blake2s)   | `dekkonot/blake2s@1.0`
