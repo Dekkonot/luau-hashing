@@ -41,3 +41,7 @@ jobs:
       - name: 'Test XXH32'
         run: |
           ./luau tests/xxhash32.luau
+
+      - name: 'Test BLAKE2s'
+        run: |
+          ./luau tests/blake2s.luau
