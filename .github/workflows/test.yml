@@ -7,6 +7,10 @@ on:
     paths: '**.luau'
 jobs:
   Tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [sha1, sha256, sha224, sha512, sha384, xxhash32, blake2s]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,30 +22,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: 'Test SHA-1'
+      - name: 'Test'
         run: |
-          ./luau tests/sha1.luau
-
-      - name: 'Test SHA-256'
-        run: |
-          ./luau tests/sha256.luau
-
-      - name: 'Test SHA-224'
-        run: |
-          ./luau tests/sha224.luau
-
-      - name: 'Test SHA-512'
-        run: |
-          ./luau tests/sha512.luau
-
-      - name: 'Test SHA-384'
-        run: |
-          ./luau tests/sha384.luau
-
-      - name: 'Test XXH32'
-        run: |
-          ./luau tests/xxhash32.luau
-
-      - name: 'Test BLAKE2s'
-        run: |
-          ./luau tests/blake2s.luau
+          ./luau tests/${{ matrix.module}}.luau
+          ./luau tests/${{ matrix.module}}.luau --codegen
