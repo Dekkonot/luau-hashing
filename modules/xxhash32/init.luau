@@ -57,7 +57,7 @@ local function xxhash32(message: string, seed: number?): number
 	end
 	digest = (digest + messageLen) % 2 ^ 32
 
-	for _ = wordC, math.floor(messageLen / 4) do
+	for _ = wordC, messageLen // 4 do
 		digest += mult(string.unpack("<I4", message, i), PRIME_3)
 		digest = mult(bit32.lrotate(digest, 17), PRIME_4)
 		wordC += 1
