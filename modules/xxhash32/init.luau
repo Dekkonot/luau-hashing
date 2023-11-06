@@ -26,7 +26,7 @@ end
 	@param seed -- The seed to use for the hashing algorithm (defaults to `0`) 
 ]=]
 local function xxhash32(message: string, seed: number?): number
-	local rSeed = if seed == nil then 0 else seed % 2 ^ 32
+	local rSeed = if seed == nil then 0 else bit32.bor(seed)
 	local messageLen = #message
 
 	local wordC = 1
@@ -40,11 +40,16 @@ local function xxhash32(message: string, seed: number?): number
 		local accum3 = rSeed
 		local accum4 = rSeed - PRIME_1
 		for _ = 0, messageLen - 16, 16 do
-			local a, b, c, d = string.unpack("<I4I4I4I4", message, i)
-			accum1 = mult(bit32.lrotate(accum1 + mult(a, PRIME_2), 13), PRIME_1)
-			accum2 = mult(bit32.lrotate(accum2 + mult(b, PRIME_2), 13), PRIME_1)
-			accum3 = mult(bit32.lrotate(accum3 + mult(c, PRIME_2), 13), PRIME_1)
-			accum4 = mult(bit32.lrotate(accum4 + mult(d, PRIME_2), 13), PRIME_1)
+			--stylua: ignore start
+			local d1, c1, b1, a1,
+				d2, c2, b2, a2,
+				d3, c3, b3, a3,
+				d4, c4, b4, a4 = string.byte(message, i, i + 15)
+			accum1 = mult(bit32.lrotate(accum1 + mult(bit32.bor(bit32.lshift(a1, 24), bit32.lshift(b1, 16), bit32.lshift(c1, 8), d1), PRIME_2), 13), PRIME_1)
+			accum2 = mult(bit32.lrotate(accum2 + mult(bit32.bor(bit32.lshift(a2, 24), bit32.lshift(b2, 16), bit32.lshift(c2, 8), d2), PRIME_2), 13), PRIME_1)
+			accum3 = mult(bit32.lrotate(accum3 + mult(bit32.bor(bit32.lshift(a3, 24), bit32.lshift(b3, 16), bit32.lshift(c3, 8), d3), PRIME_2), 13), PRIME_1)
+			accum4 = mult(bit32.lrotate(accum4 + mult(bit32.bor(bit32.lshift(a4, 24), bit32.lshift(b4, 16), bit32.lshift(c4, 8), d4), PRIME_2), 13), PRIME_1)
+			--stylua: ignore end
 			wordC += 4
 			i += 16
 		end
@@ -53,12 +58,14 @@ local function xxhash32(message: string, seed: number?): number
 			+ bit32.lrotate(accum3, 12)
 			+ bit32.lrotate(accum4, 18)
 	else
-		digest = (rSeed + PRIME_5) % 2 ^ 32
+		digest = bit32.bor(rSeed + PRIME_5)
 	end
-	digest = (digest + messageLen) % 2 ^ 32
+	digest = bit32.bor(digest + messageLen)
 
 	for _ = wordC, math.floor(messageLen / 4) do
-		digest += mult(string.unpack("<I4", message, i), PRIME_3)
+		local d, c, b, a = string.byte(message, i, i + 3)
+		--stylua: ignore
+		digest += mult(bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d), PRIME_3)
 		digest = mult(bit32.lrotate(digest, 17), PRIME_4)
 		wordC += 1
 		i += 4
