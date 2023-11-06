@@ -59,11 +59,11 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 
-		d1 = bit32.bor(a + d1)
-		d2 = bit32.bor(b + d2)
-		d3 = bit32.bor(c + d3)
-		d4 = bit32.bor(d + d4)
-		d5 = bit32.bor(e + d5)
+		d1 = bit32.bor(a + d1, 0)
+		d2 = bit32.bor(b + d2, 0)
+		d3 = bit32.bor(c + d3, 0)
+		d4 = bit32.bor(d + d4, 0)
+		d5 = bit32.bor(e + d5, 0)
 	end
 
 	-- Only update the digest once for the vine

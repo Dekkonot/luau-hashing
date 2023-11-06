@@ -26,7 +26,7 @@ end
 	@param seed -- The seed to use for the hashing algorithm (defaults to `0`) 
 ]=]
 local function xxhash32(message: string, seed: number?): number
-	local rSeed = if seed == nil then 0 else bit32.bor(seed)
+	local rSeed = if seed == nil then 0 else bit32.bor(seed, 0)
 	local messageLen = #message
 
 	local wordC = 1
@@ -58,9 +58,9 @@ local function xxhash32(message: string, seed: number?): number
 			+ bit32.lrotate(accum3, 12)
 			+ bit32.lrotate(accum4, 18)
 	else
-		digest = bit32.bor(rSeed + PRIME_5)
+		digest = bit32.bor(rSeed + PRIME_5, 0)
 	end
-	digest = bit32.bor(digest + messageLen)
+	digest = bit32.bor(digest + messageLen, 0)
 
 	for _ = wordC, math.floor(messageLen / 4) do
 		local d, c, b, a = string.byte(message, i, i + 3)
