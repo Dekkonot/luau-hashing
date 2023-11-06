@@ -161,7 +161,7 @@ local function processBlocks(
 			-- properly carrying bits. So, we have to simulate that.
 			-- This is the equivalent to temp & 0xFFFF_FFFF, which
 			-- truncates the integer for us.
-			block_back[t] = temp % 2 ^ 32
+			block_back[t] = bit32.bor(temp, 0)
 
 			block_front[t] = block_front[t - 16]
 				+ s0_front
@@ -296,7 +296,7 @@ local function sha384(message: string): string
 		"\x80",
 		string.rep("\0", 128 - (messageLen + 17) % 128),
 		string.pack(">L", messageLen * 8 / 2 ^ 32),
-		string.pack(">L", messageLen * 8 % 2 ^ 32),
+		string.pack(">L", bit32.bor(messageLen * 8)),
 	}
 	local finalBlock = table.concat(finalMessage)
 	processBlocks(digest_front, digest_back, finalBlock, 1, #finalBlock)

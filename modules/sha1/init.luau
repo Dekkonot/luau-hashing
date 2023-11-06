@@ -40,7 +40,7 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			-- So we can drop another bitwise op:
 
 			-- f = bit32.band(b, c) + bit32.band(-1 - b, d)
-			temp = bit32.lrotate(a, 5) + bit32.band(b, c) + bit32.band(-1 - b, d) + e + 0x5A827999 + block[t]
+			temp = bit32.lrotate(a, 5) + bit32.band(b, c) + bit32.band(bit32.bnot(b), d) + e + 0x5A827999 + block[t]
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 		for t = 21, 40 do
@@ -59,11 +59,11 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			e, d, c, b, a = d, c, bit32.lrotate(b, 30), a, temp
 		end
 
-		d1 = (a + d1) % 2 ^ 32
-		d2 = (b + d2) % 2 ^ 32
-		d3 = (c + d3) % 2 ^ 32
-		d4 = (d + d4) % 2 ^ 32
-		d5 = (e + d5) % 2 ^ 32
+		d1 = bit32.bor(a + d1, 0)
+		d2 = bit32.bor(b + d2, 0)
+		d3 = bit32.bor(c + d3, 0)
+		d4 = bit32.bor(d + d4, 0)
+		d5 = bit32.bor(e + d5, 0)
 	end
 
 	-- Only update the digest once for the vine

@@ -161,7 +161,7 @@ local function processBlocks(
 			-- properly carrying bits. So, we have to simulate that.
 			-- This is the equivalent to temp & 0xFFFF_FFFF, which
 			-- truncates the integer for us.
-			block_back[t] = temp % 2 ^ 32
+			block_back[t] = bit32.bor(temp, 0)
 
 			block_front[t] = block_front[t - 16]
 				+ s0_front

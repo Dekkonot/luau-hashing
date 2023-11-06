@@ -48,7 +48,7 @@ local function F(h: { number }, m: { number }, t: number, f: boolean)
 	-- Registries suffer but that's a small price to pay.
 	local v01, v02, v03, v04, v05, v06, v07, v08 = h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8]
 	local v09, v10, v11, v12, v13, v14, v15, v16 = IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7], IV[8]
-	v13 = bit32.bxor(v13, t % 2 ^ 32)
+	v13 = bit32.bxor(v13, t)
 	-- this is not using an rshift because `t` might be very big
 	v14 = bit32.bxor(v14, t // 2 ^ 32)
 	if f then

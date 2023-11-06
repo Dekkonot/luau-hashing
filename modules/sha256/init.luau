@@ -51,7 +51,7 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			temp1 = h
 				+ bit32.bxor(bit32.rrotate(e, 6), bit32.rrotate(e, 11), bit32.rrotate(e, 25))
 				+ bit32.band(e, f)
-				+ bit32.band(-1 - e, g)
+				+ bit32.band(bit32.bnot(e), g)
 				+ K[t]
 				+ block[t]
 			-- bsig0(a) + maj(a, b, c)
@@ -70,14 +70,14 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			a = temp1 + temp2
 		end
 
-		d1 = (a + d1) % 2 ^ 32
-		d2 = (b + d2) % 2 ^ 32
-		d3 = (c + d3) % 2 ^ 32
-		d4 = (d + d4) % 2 ^ 32
-		d5 = (e + d5) % 2 ^ 32
-		d6 = (f + d6) % 2 ^ 32
-		d7 = (g + d7) % 2 ^ 32
-		d8 = (h + d8) % 2 ^ 32
+		d1 = bit32.bor(a + d1, 0)
+		d2 = bit32.bor(b + d2, 0)
+		d3 = bit32.bor(c + d3, 0)
+		d4 = bit32.bor(d + d4, 0)
+		d5 = bit32.bor(e + d5, 0)
+		d6 = bit32.bor(f + d6, 0)
+		d7 = bit32.bor(g + d7, 0)
+		d8 = bit32.bor(h + d8, 0)
 	end
 
 	digest[1] = d1
