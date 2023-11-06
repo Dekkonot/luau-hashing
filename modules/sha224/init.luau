@@ -70,14 +70,14 @@ local function processBlocks(digest: { number }, message: string, start: number,
 			a = temp1 + temp2
 		end
 
-		d1 = bit32.bor(a + d1)
-		d2 = bit32.bor(b + d2)
-		d3 = bit32.bor(c + d3)
-		d4 = bit32.bor(d + d4)
-		d5 = bit32.bor(e + d5)
-		d6 = bit32.bor(f + d6)
-		d7 = bit32.bor(g + d7)
-		d8 = bit32.bor(h + d8)
+		d1 = bit32.bor(a + d1, 0)
+		d2 = bit32.bor(b + d2, 0)
+		d3 = bit32.bor(c + d3, 0)
+		d4 = bit32.bor(d + d4, 0)
+		d5 = bit32.bor(e + d5, 0)
+		d6 = bit32.bor(f + d6, 0)
+		d7 = bit32.bor(g + d7, 0)
+		d8 = bit32.bor(h + d8, 0)
 	end
 
 	digest[1] = d1
