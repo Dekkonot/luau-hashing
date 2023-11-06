@@ -55,10 +55,12 @@ local function xxhash32(message: string, seed: number?): number
 	else
 		digest = (rSeed + PRIME_5) % 2 ^ 32
 	end
-	digest = (digest + messageLen) % 2 ^ 32
+	digest = bit32.bor(digest + messageLen, 0)
 
 	for _ = wordC, messageLen // 4 do
-		digest += mult(string.unpack("<I4", message, i), PRIME_3)
+		local d, c, b, a = string.byte(message, i, i + 3)
+		--stylua: ignore
+		digest += mult(bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d), PRIME_3)
 		digest = mult(bit32.lrotate(digest, 17), PRIME_4)
 		wordC += 1
 		i += 4

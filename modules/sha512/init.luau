@@ -187,9 +187,9 @@ local function processBlocks(
 
 			--stylua: ignore start
 			-- h + S1 + Ch(e, f, g) + K[t] + W[t]
-			local temp1_back = h_back + s1_back + bit32.bor(bit32.band(e_back, f_back), bit32.band(-1 - e_back, g_back)) + K_BACK[t] + block_back[t]
-			local temp1_front = h_front + s1_front + bit32.bor(bit32.band(e_front, f_front), bit32.band(-1 - e_front, g_front)) + K_FRONT[t] + block_front[t] + temp1_back // 2 ^ 32
-			temp1_back %= 2 ^ 32
+			local temp1_back = h_back + s1_back + bit32.bor(bit32.band(e_back, f_back), bit32.band(-1 - e_back, g_back), 0) + K_BACK[t] + block_back[t]
+			local temp1_front = h_front + s1_front + bit32.bor(bit32.band(e_front, f_front), bit32.band(-1 - e_front, g_front), 0) + K_FRONT[t] + block_front[t] + temp1_back // 2 ^ 32
+			temp1_back = bit32.bor(temp1_back, 0)
 
 			-- S0 + Maj
 			local temp2_back = s0_back + bit32.band(c_back, b_back) + bit32.band(a_back, bit32.bxor(c_back, b_back))
@@ -202,7 +202,7 @@ local function processBlocks(
 
 			e_back = temp1_back + d_back
 			e_front = temp1_front + d_front + e_back // 2 ^ 32
-			e_back %= 2 ^ 32
+			e_back = bit32.bor(e_back, 0)
 
 			d_front, d_back = c_front, c_back
 			c_front, c_back = b_front, b_back
@@ -210,40 +210,40 @@ local function processBlocks(
 
 			a_back = temp1_back + temp2_back
 			a_front = temp1_front + temp2_front + a_back // 2 ^ 32
-			a_back %= 2 ^ 32
+			a_back = bit32.bor(a_back, 0)
 		end
 
 		d1_back = d1_back + a_back
-		d1_front = (d1_front + a_front + d1_back // 2 ^ 32) % 2 ^ 32
-		d1_back %= 2 ^ 32
+		d1_front = bit32.bor(d1_front + a_front + d1_back // 2 ^ 32, 0)
+		d1_back = bit32.bor(d1_back, 0)
 
 		d2_back = d2_back + b_back
-		d2_front = (d2_front + b_front + d2_back // 2 ^ 32) % 2 ^ 32
-		d2_back %= 2 ^ 32
+		d2_front = bit32.bor(d2_front + b_front + d2_back // 2 ^ 32, 0)
+		d2_back = bit32.bor(d2_back, 0)
 
 		d3_back = d3_back + c_back
-		d3_front = (d3_front + c_front + d3_back // 2 ^ 32) % 2 ^ 32
-		d3_back %= 2 ^ 32
+		d3_front = bit32.bor(d3_front + c_front + d3_back // 2 ^ 32, 0)
+		d3_back = bit32.bor(d3_back, 0)
 
 		d4_back = d4_back + d_back
-		d4_front = (d4_front + d_front + d4_back // 2 ^ 32) % 2 ^ 32
-		d4_back %= 2 ^ 32
+		d4_front = bit32.bor(d4_front + d_front + d4_back // 2 ^ 32, 0)
+		d4_back = bit32.bor(d4_back, 0)
 
 		d5_back = d5_back + e_back
-		d5_front = (d5_front + e_front + d5_back // 2 ^ 32) % 2 ^ 32
-		d5_back %= 2 ^ 32
+		d5_front = bit32.bor(d5_front + e_front + d5_back // 2 ^ 32, 0)
+		d5_back = bit32.bor(d5_back, 0)
 
 		d6_back = d6_back + f_back
-		d6_front = (d6_front + f_front + d6_back // 2 ^ 32) % 2 ^ 32
-		d6_back %= 2 ^ 32
+		d6_front = bit32.bor(d6_front + f_front + d6_back // 2 ^ 32, 0)
+		d6_back = bit32.bor(d6_back, 0)
 
 		d7_back = d7_back + g_back
-		d7_front = (d7_front + g_front + d7_back // 2 ^ 32) % 2 ^ 32
-		d7_back %= 2 ^ 32
+		d7_front = bit32.bor(d7_front + g_front + d7_back // 2 ^ 32, 0)
+		d7_back = bit32.bor(d7_back, 0)
 
 		d8_back = d8_back + h_back
-		d8_front = (d8_front + h_front + d8_back // 2 ^ 32) % 2 ^ 32
-		d8_back %= 2 ^ 32
+		d8_front = bit32.bor(d8_front + h_front + d8_back // 2 ^ 32, 0)
+		d8_back = bit32.bor(d8_back, 0)
 	end
 
 	digestFront[1], digestBack[1] = d1_front, d1_back
