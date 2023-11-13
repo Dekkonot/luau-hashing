@@ -169,7 +169,7 @@ local function processBlocks(
 				+ s1_front
 				-- After that, any leftover bits are shifted down until
 				-- they can be added safely
-				+ math.floor(temp / 2 ^ 32) -- TODO replace with integer division
+				+ temp // 2 ^ 32
 
 			-- block_front[t] %= 2 ^ 32 -- unnecessary but good for debugging
 		end
@@ -188,7 +188,7 @@ local function processBlocks(
 			--stylua: ignore start
 			-- h + S1 + Ch(e, f, g) + K[t] + W[t]
 			local temp1_back = h_back + s1_back + bit32.bor(bit32.band(e_back, f_back), bit32.band(-1 - e_back, g_back), 0) + K_BACK[t] + block_back[t]
-			local temp1_front = h_front + s1_front + bit32.bor(bit32.band(e_front, f_front), bit32.band(-1 - e_front, g_front), 0) + K_FRONT[t] + block_front[t] + math.floor(temp1_back / 2 ^ 32)
+			local temp1_front = h_front + s1_front + bit32.bor(bit32.band(e_front, f_front), bit32.band(-1 - e_front, g_front), 0) + K_FRONT[t] + block_front[t] + temp1_back // 2 ^ 32
 			temp1_back = bit32.bor(temp1_back, 0)
 
 			-- S0 + Maj
@@ -201,7 +201,7 @@ local function processBlocks(
 			f_front, f_back = e_front, e_back
 
 			e_back = temp1_back + d_back
-			e_front = temp1_front + d_front + math.floor(e_back / 2 ^ 32) --  -- TODO replace with integer division
+			e_front = temp1_front + d_front + e_back // 2 ^ 32
 			e_back = bit32.bor(e_back, 0)
 
 			d_front, d_back = c_front, c_back
@@ -209,40 +209,40 @@ local function processBlocks(
 			b_front, b_back = a_front, a_back
 
 			a_back = temp1_back + temp2_back
-			a_front = temp1_front + temp2_front + math.floor(a_back / 2 ^ 32)
+			a_front = temp1_front + temp2_front + a_back // 2 ^ 32
 			a_back = bit32.bor(a_back, 0)
 		end
 
 		d1_back = d1_back + a_back
-		d1_front = bit32.bor(d1_front + a_front + math.floor(d1_back / 2 ^ 32), 0)
+		d1_front = bit32.bor(d1_front + a_front + d1_back // 2 ^ 32, 0)
 		d1_back = bit32.bor(d1_back, 0)
 
 		d2_back = d2_back + b_back
-		d2_front = bit32.bor(d2_front + b_front + math.floor(d2_back / 2 ^ 32), 0)
+		d2_front = bit32.bor(d2_front + b_front + d2_back // 2 ^ 32, 0)
 		d2_back = bit32.bor(d2_back, 0)
 
 		d3_back = d3_back + c_back
-		d3_front = bit32.bor(d3_front + c_front + math.floor(d3_back / 2 ^ 32), 0)
+		d3_front = bit32.bor(d3_front + c_front + d3_back // 2 ^ 32, 0)
 		d3_back = bit32.bor(d3_back, 0)
 
 		d4_back = d4_back + d_back
-		d4_front = bit32.bor(d4_front + d_front + math.floor(d4_back / 2 ^ 32), 0)
+		d4_front = bit32.bor(d4_front + d_front + d4_back // 2 ^ 32, 0)
 		d4_back = bit32.bor(d4_back, 0)
 
 		d5_back = d5_back + e_back
-		d5_front = bit32.bor(d5_front + e_front + math.floor(d5_back / 2 ^ 32), 0)
+		d5_front = bit32.bor(d5_front + e_front + d5_back // 2 ^ 32, 0)
 		d5_back = bit32.bor(d5_back, 0)
 
 		d6_back = d6_back + f_back
-		d6_front = bit32.bor(d6_front + f_front + math.floor(d6_back / 2 ^ 32), 0)
+		d6_front = bit32.bor(d6_front + f_front + d6_back // 2 ^ 32, 0)
 		d6_back = bit32.bor(d6_back, 0)
 
 		d7_back = d7_back + g_back
-		d7_front = bit32.bor(d7_front + g_front + math.floor(d7_back / 2 ^ 32), 0)
+		d7_front = bit32.bor(d7_front + g_front + d7_back // 2 ^ 32, 0)
 		d7_back = bit32.bor(d7_back, 0)
 
 		d8_back = d8_back + h_back
-		d8_front = bit32.bor(d8_front + h_front + math.floor(d8_back / 2 ^ 32), 0)
+		d8_front = bit32.bor(d8_front + h_front + d8_back // 2 ^ 32, 0)
 		d8_back = bit32.bor(d8_back, 0)
 	end
 

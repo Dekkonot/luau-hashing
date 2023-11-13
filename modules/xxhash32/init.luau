@@ -62,7 +62,7 @@ local function xxhash32(message: string, seed: number?): number
 	end
 	digest = bit32.bor(digest + messageLen, 0)
 
-	for _ = wordC, math.floor(messageLen / 4) do
+	for _ = wordC, messageLen // 4 do
 		local d, c, b, a = string.byte(message, i, i + 3)
 		--stylua: ignore
 		digest += mult(bit32.bor(bit32.lshift(a, 24), bit32.lshift(b, 16), bit32.lshift(c, 8), d), PRIME_3)

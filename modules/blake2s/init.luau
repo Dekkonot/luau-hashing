@@ -50,7 +50,7 @@ local function F(h: { number }, m: { number }, t: number, f: boolean)
 	local v09, v10, v11, v12, v13, v14, v15, v16 = IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7], IV[8]
 	v13 = bit32.bxor(v13, t)
 	-- this is not using an rshift because `t` might be very big
-	v14 = bit32.bxor(v14, math.floor(t / 2 ^ 32))
+	v14 = bit32.bxor(v14, t // 2 ^ 32)
 	if f then
 		v15 = bit32.bnot(v15)
 	end
