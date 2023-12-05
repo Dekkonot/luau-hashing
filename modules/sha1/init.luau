@@ -1,4 +1,5 @@
 --!strict
+--!native
 --!optimize 2
 
 --- An allocation that is reused for blocks during hashing

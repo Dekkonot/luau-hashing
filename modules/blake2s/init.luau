@@ -1,4 +1,5 @@
 --!strict
+--!native
 --!optimize 2
 
 --- The initial values used for the hasher state.

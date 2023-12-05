@@ -1,4 +1,5 @@
 --!strict
+--!native
 --!optimize 2
 
 local PRIME_1 = 0x9e3779B1

@@ -1,4 +1,5 @@
 --!strict
+--!native
 --!optimize 2
 
 local BLOCK_FRONT = table.create(80)

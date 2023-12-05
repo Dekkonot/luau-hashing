@@ -1,4 +1,5 @@
 --!strict
+--!native
 --!optimize 2
 
 --stylua: ignore
