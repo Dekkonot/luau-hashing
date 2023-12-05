@@ -19,22 +19,6 @@ local SIGMA = {
 }
 
 --[=[
-	Swaps the byte order of `n`. This is in effect changing the endianness
-	of an integer.
-
-	@param n The number to swap the byte order of.
-	@return The endianness-swapped number.
-]=]
-local function byteswap(n: number): number
-	return bit32.bor(
-		bit32.lshift(n, 24),
-		bit32.band(bit32.lshift(n, 8), 0xFF0000),
-		bit32.band(bit32.rshift(n, 8), 0xFF00),
-		bit32.rshift(n, 24)
-	)
-end
-
---[=[
 	The BLAKE2s compression function.
 
 	@param h The internal digest for the algorithm
@@ -222,14 +206,14 @@ local function blake2s(message: string, outSize: number, key: string?): string
 	-- TODO efficiency
 	local digest = string.format(
 		"%08x%08x%08x%08x%08x%08x%08x%08x",
-		byteswap(h[1]),
-		byteswap(h[2]),
-		byteswap(h[3]),
-		byteswap(h[4]),
-		byteswap(h[5]),
-		byteswap(h[6]),
-		byteswap(h[7]),
-		byteswap(h[8])
+		bit32.byteswap(h[1]),
+		bit32.byteswap(h[2]),
+		bit32.byteswap(h[3]),
+		bit32.byteswap(h[4]),
+		bit32.byteswap(h[5]),
+		bit32.byteswap(h[6]),
+		bit32.byteswap(h[7]),
+		bit32.byteswap(h[8])
 	)
 
 	return string.sub(digest, 1, outSize * 2)
