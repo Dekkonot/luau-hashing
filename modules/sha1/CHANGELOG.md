@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Several performance improvements
+
 ## Version 1.0.2
 
 - Reworked implementation to significantly reduce memory footprint (approximately `95%` in tests)
