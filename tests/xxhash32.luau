@@ -1,4 +1,4 @@
-local xxhash32 = require("modules/xxhash32/init")
+local xxhash32 = require("../modules/xxhash32")
 
 local t = os.clock()
 local startgc = gcinfo()

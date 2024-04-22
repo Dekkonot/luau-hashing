@@ -1,4 +1,4 @@
-local sha384 = require("modules/sha384/init")
+local sha384 = require("../modules/sha384")
 
 local t = os.clock()
 local startgc = gcinfo()

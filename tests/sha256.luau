@@ -1,4 +1,4 @@
-local sha256 = require("modules/sha256/init")
+local sha256 = require("../modules/sha256")
 
 local t = os.clock()
 local startgc = gcinfo()

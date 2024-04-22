@@ -1,4 +1,4 @@
-local blake2s = require("modules/blake2s/init")
+local blake2s = require("../modules/blake2s")
 
 local t = os.clock()
 local startgc = gcinfo()

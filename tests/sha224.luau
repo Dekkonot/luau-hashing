@@ -1,4 +1,4 @@
-local sha224 = require("modules/sha224/init")
+local sha224 = require("../modules/sha224")
 
 local t = os.clock()
 local startgc = gcinfo()
