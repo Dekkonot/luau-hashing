@@ -100,11 +100,15 @@ local function sha1(message: string): (string, { number })
 		processBlocks(digest, message, 1, messageLen - leftover)
 	end
 
-	-- TODO find a way to do this more eloquently
+	-- Raise `leftover` to next multiple of 64 so that we can calculate
+	-- how much padding we need without a branch or loop.
+	-- The number here is just masking off the last 6 bits.
+	local nextMultipleOf64 = bit32.band(leftover + 32, 0xffffffc0)
+
 	local finalMessage = {
 		if leftover ~= 0 then string.sub(message, -leftover) else "",
 		"\x80",
-		string.rep("\0", 64 - (messageLen + 9) % 64),
+		string.rep("\0", (nextMultipleOf64 - leftover - 9) % 64),
 		string.pack(">L", messageLen * 8),
 	}
 	local finalBlock = table.concat(finalMessage)

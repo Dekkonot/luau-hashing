@@ -31,6 +31,33 @@ assert(
 		== "fe32af74bc982dc5da23e54055f5515e948a10bd",
 	"(SHA-1) Fitness-Gram hash does not match"
 )
+
+assert(
+	sha1("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa") == "c1c8bbdc22796e28c0e15163d20899b65621d65a",
+	"(SHA-1) 55 character a hash does not match"
+)
+
+assert(
+	sha1(
+		"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	) == "ee971065aaa017e0632a8ca6c77bb3bf8b1dfc56",
+	"(SHA-1) 119 character a hash does not match"
+)
+
+assert(
+	sha1(
+		"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	) == "ac877859d427d9192054eea8feb3b8a403ef83a5",
+	"(SHA-1) 111 character a hash does not match"
+)
+
+assert(
+	sha1(
+		"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	) == "fdc30857cf7b957f47ebd8288d5e5d7426f44394",
+	"(SHA-1) 239 character a hash does not match"
+)
+
 if true then
 	local e = string.rep("e", 199999)
 	local a = string.rep("a", 1e6)
