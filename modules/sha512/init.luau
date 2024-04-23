@@ -292,10 +292,16 @@ local function sha512(message: string): string
 	if messageLen >= 128 then
 		processBlocks(digest_front, digest_back, message, 1, messageLen - leftover)
 	end
+
+	-- Raise `leftover` to next multiple of 128 so that we can calculate
+	-- how much padding we need without a branch or loop.
+	-- The number here is just masking off the last 6 bits.
+	local nextMultipleOf128 = bit32.band(leftover + 64, 0xfffff000)
+
 	local finalMessage = {
 		if leftover ~= 0 then string.sub(message, -leftover) else "",
 		"\x80",
-		string.rep("\0", 128 - (messageLen + 17) % 128),
+		string.rep("\0", (nextMultipleOf128 - leftover - 17) % 128),
 		string.pack(">L", messageLen * 8 / 2 ^ 32),
 		string.pack(">L", messageLen * 8 % 2 ^ 32),
 	}
