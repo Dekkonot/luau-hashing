@@ -1,0 +1,17 @@
+{
+    "name": "@dekkonot/sha224",
+    "version": "1.0.1",
+    "description": "Implementation of the SHA-224 hashing algorithm",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Dekkonot/luau-hashing.git",
+      "directory": "src/sha224/"
+    },
+    "contributors": [
+      "Dekkonot"
+    ],
+    "bugs": {
+      "url": "https://github.com/Dekkonot/luau-hashing/issues"
+    }
+  }
