@@ -1,0 +1,15 @@
+{
+    "name": "@dekkonot/luau-hashing",
+    "version": "1.0.0",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Dekkonot/luau-hashing.git"
+    },
+    "contributors": [
+      "Dekkonot"
+    ],
+    "bugs": {
+      "url": "https://github.com/Dekkonot/luau-hashing/issues"
+    }
+  }
