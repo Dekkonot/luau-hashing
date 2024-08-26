@@ -4,3 +4,9 @@ sourcemap.json
 *.rbxmx
 
 *.zip
+
+# Package manager stuff
+Packages/
+wally.lock
+node_modules/
+package-lock.json
