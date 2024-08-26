@@ -1,11 +1,12 @@
 {
-    "name": "@dekkonot/luau-hashing",
-    "description": "Pure Luau implementations of several hashing algorithms. Blazing fast (for Luau) and well-tested.",
+    "name": "@dekkonot/sha1",
     "version": "1.0.1",
+    "description": "Implementation of the SHA-1 hashing algorithm",
     "license": "MIT",
     "repository": {
       "type": "git",
-      "url": "https://github.com/Dekkonot/luau-hashing.git"
+      "url": "https://github.com/Dekkonot/luau-hashing.git",
+      "directory": "src/sha1/"
     },
     "contributors": [
       "Dekkonot"
