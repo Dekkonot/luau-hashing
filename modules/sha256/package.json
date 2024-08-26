@@ -1,17 +1,17 @@
 {
-    "name": "@dekkonot/sha256",
-    "version": "1.0.1",
-    "description": "Implementation of the SHA-256 hashing algorithm",
-    "license": "MIT",
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/Dekkonot/luau-hashing.git",
-      "directory": "src/sha256/"
-    },
-    "contributors": [
-      "Dekkonot"
-    ],
-    "bugs": {
-      "url": "https://github.com/Dekkonot/luau-hashing/issues"
-    }
+  "name": "@dekkonot/sha256",
+  "version": "1.0.1",
+  "description": "Implementation of the SHA-256 hashing algorithm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dekkonot/luau-hashing.git",
+    "directory": "src/sha256/"
+  },
+  "contributors": [
+    "Dekkonot"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dekkonot/luau-hashing/issues"
   }
+}

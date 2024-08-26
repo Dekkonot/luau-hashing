@@ -1,17 +1,17 @@
 {
-    "name": "@dekkonot/xxhash32",
-    "version": "1.0.1",
-    "description": "Implementation of the XXH32 hashing algorithm",
-    "license": "MIT",
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/Dekkonot/luau-hashing.git",
-      "directory": "src/xxhash32/"
-    },
-    "contributors": [
-      "Dekkonot"
-    ],
-    "bugs": {
-      "url": "https://github.com/Dekkonot/luau-hashing/issues"
-    }
+  "name": "@dekkonot/xxhash32",
+  "version": "1.0.1",
+  "description": "Implementation of the XXH32 hashing algorithm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dekkonot/luau-hashing.git",
+    "directory": "src/xxhash32/"
+  },
+  "contributors": [
+    "Dekkonot"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dekkonot/luau-hashing/issues"
   }
+}
