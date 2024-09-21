@@ -13,5 +13,8 @@
   ],
   "bugs": {
     "url": "https://github.com/Dekkonot/luau-hashing/issues"
-  }
+  },
+  "files": [
+    "*.luau"
+  ]
 }
