@@ -93,7 +93,7 @@ assert(
 
 assert(
 	blake2s("bar", 32) == "3d9f08067d69177f67c827ac12b23e06c23939813ec80fe347e2a9c2d29c9efd",
-	"(BLAKE2s) bar hash with key does not match"
+	"(BLAKE2s) bar hash does not match"
 )
 assert(
 	blake2s("bar", 32, "3d9f08067d69177f67c827ac12b23e06")
