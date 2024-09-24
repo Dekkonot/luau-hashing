@@ -1,0 +1,13 @@
+[package]
+name = "dekkonot/md5"
+description = "Implementation of the MD5 hashing algorithm"
+license = "MIT"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+version = "1.0.0"
+
+include = ["*.luau", "wally.toml"]
+exclude = ["*"]
+
+[dependencies]
