@@ -15,6 +15,7 @@ Modules reside in their own folders under `modules` and have their own READMEs w
 | [`sha-384`](modules/sha384)    | `dekkonot/sha384`   | `@dekkonot/sha384`   |
 | [`xxhash32`](modules/xxhash32) | `dekkonot/xxhash32` | `@dekkonot/xxhash32` |
 | [`blake2s`](modules/blake2s)   | `dekkonot/blake2s`  | `@dekkonot/blake2s`  |
+| [`blake2b`](modules/blake2b)   | `dekkonot/blake2b`  | `@dekkonot/blake2b`  |
 | [`md5`](modules/md5)           | `dekkonot/md5`      | `@dekkonot/md5`      |
 
 [Wally]: https://wally.run/
