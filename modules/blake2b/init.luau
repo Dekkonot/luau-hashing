@@ -24,57 +24,6 @@ local SIGMA = {
 	{ 15, 11, 5, 9, 10, 16, 14, 7, 2, 13, 1, 3, 12, 8, 6, 4 },
 }
 
---- The `G` round function from the blake2x compression family
--- local function G(
--- 	a_front: number, a_back: number,
--- 	b_front: number, b_back: number,
--- 	c_front: number, c_back: number,
--- 	d_front: number, d_back: number,
--- 	x_front: number, x_back: number,
--- 	y_front: number, y_back: number
--- ): (number, number, number, number, number, number, number, number)
--- 	local temp = a_back + b_back + x_back
--- 	a_front = a_front + b_front + x_front + temp // 2 ^ 32
--- 	a_back = temp % 2 ^ 32
-
--- 	-- rrotate(a ~ b, N) == rrotate(a, N) ~ rrotate(b, N)
---     -- rrotate(x, 32) is equivalent to swapping the halves
---     -- thus: rrotate(a_front ~ b_front, 32) == rrotate(a_front, 32) ~ rrotate(b_front, 32)
---     --   ==  a_back ~ b_back
--- 	temp = d_front
---     d_front = bit32.bxor(d_back, a_back)
---     d_back = bit32.bxor(temp, a_front)
-
--- 	temp = c_back + d_back
---     c_front = c_front + d_front + temp // 2 ^ 32
---     c_back = temp % 2 ^ 32
-
--- 	temp = b_front
---     b_front = bit32.bxor(bit32.rshift(b_front, 24), bit32.lshift(b_back, 8), bit32.rshift(c_front, 24), bit32.lshift(c_back, 8))
---     b_back = bit32.bxor(bit32.rshift(b_back, 24), bit32.lshift(temp, 8), bit32.rshift(c_back, 24), bit32.lshift(c_front, 8))
-
--- 	temp = a_back + b_back + y_back
---     a_front = a_front + b_front + y_front + temp // 2 ^ 32
---     a_back = temp % 2 ^ 32
-
--- 	temp = d_front
---     d_front = bit32.bxor(bit32.rshift(d_front, 16), bit32.lshift(d_back, 16), bit32.rshift(a_front, 16), bit32.lshift(a_back, 16))
---     d_back = bit32.bxor(bit32.rshift(d_back, 16), bit32.lshift(temp, 16), bit32.rshift(a_back, 16), bit32.lshift(a_front, 16))
-
--- 	temp = c_back + d_back
---     c_front = c_front + d_front + temp // 2 ^ 32
---     c_back = temp % 2 ^ 32
-
--- 	temp = b_front
---     b_front = bit32.bxor(bit32.lshift(b_front, 1), bit32.rshift(b_back, 31), bit32.lshift(c_front, 1), bit32.rshift(c_back, 31))
---     b_back = bit32.bxor(bit32.lshift(b_back, 1), bit32.rshift(temp, 31), bit32.lshift(c_back, 1), bit32.rshift(c_front, 31))
-
--- 	return a_front, a_back,
--- 		b_front, b_back,
--- 		c_front, c_back,
--- 		d_front, d_back
--- end
-
 --[=[
 	The BLAKE2b compression function.
 
