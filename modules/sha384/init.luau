@@ -270,7 +270,7 @@ end
 	@return string -- The computed SHA-384 hash as a string of hexadecimal digits
 	@return {number} -- The computed SHA-384 hash as an array of 12 integers
 ]=]
-local function sha384(message: string): string
+local function sha384(message: string): (string, { number })
 	local digest_front =
 		{ 0xcbbb9d5d, 0x629a292a, 0x9159015a, 0x152fecd8, 0x67332667, 0x8eb44a87, 0xdb0c2e0d, 0x47b5481d }
 	local digest_back =

@@ -270,7 +270,7 @@ end
 	@return string -- The computed SHA-512 hash as a string of hexadecimal digits
 	@return {number} -- The computed SHA-512 hash as an array of 16 integers
 ]=]
-local function sha512(message: string): string
+local function sha512(message: string): (string, { number })
 	local digest_front =
 		{ 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }
 	local digest_back =

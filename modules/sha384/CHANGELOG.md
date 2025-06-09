@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.0.2
+
+- Fixed Luau return type
+
 ## Version 1.0.1
 
 - Several performance improvements
